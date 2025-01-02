@@ -16,6 +16,10 @@
             line-height: 1.6;
             position: relative;
             overflow: hidden;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         h1, h2 {
@@ -33,6 +37,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
             z-index: 1; /* Ensure this is above the sprinkle effect */
+            overflow-y: auto; /* Enable scroll if content overflows */
+            max-height: 90vh; /* Limit container height to 90% of viewport */
         }
 
         .content {
@@ -125,7 +131,7 @@
             background: #00d4ff;
             border-radius: 50%;
             animation: sprinkle-animation 5s linear infinite;
-            top: 0; /* Start from the top */
+            top: 0; /* Start from the top-right */
         }
         
         @keyframes sprinkle-animation {
@@ -159,14 +165,6 @@
 
     <div class="container">
         <h2>Register</h2>
-        <!-- Display Flash messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-message {{ messages[0][0] }}">
-                    {{ messages[0][1] }}
-                </div>
-            {% endif %}
-        {% endwith %}
         
         <form action="/register" method="POST">
             <div class="form-group">
