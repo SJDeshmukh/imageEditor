@@ -283,7 +283,7 @@
             formData.append('format', format);
         
             // Send the image data to the server
-            fetch('http://127.0.0.1:5000/convert', {
+            fetch('/convert', {
                 method: 'POST',
                 body: formData
             })
