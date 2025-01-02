@@ -210,6 +210,36 @@
         .services .card h3 {
             text-decoration: none; /* Ensure no underline on service card titles */
         }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* For medium screens (Tablets) */
+            .services {
+                grid-template-columns: 1fr 1fr; /* 2 cards in a row */
+                padding: 40px 10px;
+            }
+
+            nav ul li a {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* For small screens (Phones) */
+            .services {
+                grid-template-columns: 1fr; /* 1 card in a row */
+                padding: 30px 10px;
+            }
+
+            nav ul li a {
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 1.5rem; /* Smaller font for title */
+                margin-top: 120px;
+            }
+        }
     </style>
 </head>
 <body>
