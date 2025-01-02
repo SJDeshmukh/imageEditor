@@ -55,6 +55,11 @@ def require_login():
             flash('You must log in to access this page.', 'error')
             return redirect(url_for('log_in'))
 
+
+@app.route('/')
+def loginto():
+    return render_template('login.html')
+
 # Routes
 @app.route('/register', methods=['GET', 'POST'])
 def register():
