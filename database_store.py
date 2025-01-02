@@ -105,7 +105,7 @@ def log_in():
             session['logged_in'] = True
             session['user_id'] = user['id']
             flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+            return render_template('home_page.html')
         else:
             flash('Invalid email or password', 'error')
 
