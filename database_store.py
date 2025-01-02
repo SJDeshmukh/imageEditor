@@ -60,7 +60,10 @@ def require_login():
 
 @app.route('/', methods=['GET', 'POST'])
 def loginto():
-    return redirect(url_for('log_in'))
+    # Ensure to redirect to login if not logged in
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('log_in'))
+    return redirect(url_for('home'))  # or another route like home
 
 # Routes
 @app.route('/register', methods=['GET', 'POST'])
