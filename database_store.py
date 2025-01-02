@@ -85,7 +85,7 @@ def success():
     return "Registration successful!"
 
 @app.route('/')
-def /():
+def logintopage():
     return render_template('login.html')
 
 
