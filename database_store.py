@@ -117,7 +117,7 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('log_in'))
 
-@app.route('/home')
+@app.route('/log_in', methods=['GET', 'POST'])
 @login_required
 def home():
     return render_template('home_page.html')
