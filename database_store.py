@@ -49,7 +49,9 @@ def login_required(f):
 
 @app.before_request
 def require_login():
-    open_routes = ['log_in', 'register', 'static']  # Routes accessible without login
+    open_routes = ['log_in', 'register', 'static']
+    print("Request Endpoint:", request.endpoint)  # Debug log
+
     if 'logged_in' not in session or not session['logged_in']:
         if request.endpoint not in open_routes and request.endpoint is not None:
             flash('You must log in to access this page.', 'error')
