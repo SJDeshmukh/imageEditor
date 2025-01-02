@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | Image Processing Solutions</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #090a0f, #1b1d29);
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth; /* Smooth scrolling */
+        }
+
+        h1, h2 {
+            margin:100px;
+            text-align: center;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none; /* Remove underline */
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+        
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Services Section */
+        .services {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 cards in a row */
+            gap: 20px;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .services .card {
+            background: #222;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s forwards; /* Fade-in animation */
+            cursor: pointer; /* Change cursor to pointer */
+        }
+
+        .services .card:hover {
+            transform: translateY(-10px) scale(1.05); /* Slightly bigger on hover */
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .services .card h3 {
+            color: #00d4ff;
+            font-size: 1.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .services .card p {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        .services .card:hover h3 {
+            color: #ffdb00; /* Change color of the title on hover */
+        }
+
+        /* Fade-In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Glow Effect */
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff;
+            }
+            50% {
+                text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+            }
+        }
+
+        /* Sprinkle Effect */
+        .sprinkle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .sprinkle span {
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: sprinkle-animation 5s linear infinite;
+        }
+
+        @keyframes sprinkle-animation {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Call to Action */
+        .cta-button {
+            display: block;
+            margin: 50px auto;
+            padding: 15px 30px;
+            background-color: #00d4ff;
+            color: #fff;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #00b8c3;
+            transform: translateY(-5px);
+        }
+
+        /* Centered Title */
+        .services h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .services .card h3 {
+            text-decoration: none; /* Ensure no underline on service card titles */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sprinkle Effect -->
+    <div class="sprinkle">
+        <script>
+            const sprinkleContainer = document.querySelector('.sprinkle');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.style.left = `${Math.random() * 100}%`;
+                span.style.animationDelay = `${Math.random() * 2}s`;
+                span.style.animationDuration = `${2 + Math.random() * 3}s`;
+                sprinkleContainer.appendChild(span);
+            }
+        </script>
+    </div>
+
+    <div>
+        <h1>Our Image Processing Services</h1>
+    </div>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <!-- Service 1 - Image Resizer and Format Converter -->
+        <a href="http://127.0.0.1:5000/image_resizer" class="card">
+            <h3>Image Resizer & Format Converter</h3>
+            <p>Resize your images or convert them to different formats (PNG, JPG, WebP) with ease. Upload and download processed images in seconds.</p>
+        </a>
+
+        <!-- Service 2 - Image Compression Tool -->
+        <a href="http://127.0.0.1:5000/compression_page" class="card">
+            <h3>Image Compression Tool</h3>
+            <p>Reduce image file sizes without losing quality. Control the compression level with a slider and compare file sizes before and after.</p>
+        </a>
+
+        <!-- Service 3 - Grayscale Converter -->
+        <a href="http://127.0.0.1:5000/grayscale" class="card">
+            <h3>Grayscale Converter</h3>
+            <p>Convert your images to black and white with customizable contrast, brightness, and sharpness adjustments.</p>
+        </a>
+
+        <!-- Service 4 - Edge Detection -->
+        <a href="http://127.0.0.1:5000/edge_detection" class="card">
+            <h3>Edge Detection</h3>
+            <p>Use edge detection algorithms like Canny to identify and highlight edges in your images for better analysis.</p>
+        </a>
+
+        <!-- Service 5 - Image Filter Application -->
+        <a href="http://127.0.0.1:5000/color_change" class="card">
+            <h3>Image Filter Application</h3>
+            <p>Apply various filters like sepia, blur, and negative to your images. Preview and download the enhanced version.</p>
+        </a>
+
+        <!-- Service 6 - Image Watermarking -->
+        <a href="http://127.0.0.1:5000/watermark" class="card">
+            <h3>Image Watermarking</h3>
+            <p>Add watermarks to your images to protect intellectual property or add branding.</p>
+        </a>
+    </section>
+</body>
+</html>

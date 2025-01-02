@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+        }
+
+        h1, h2 {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: #f5f5f5;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #00bcd4;
+            margin-top: 80px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-top: 20px;
+            color: #bbbbbb;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Services Section */
+        .services {
+            margin-top: 100px;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #2a2a4a, #1e1e2f);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .service {
+            background-color: #33334d;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px;
+            width: 280px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+        }
+
+        .service:hover {
+            background-color: #00bcd4;
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .service h3 {
+            font-size: 1.8rem;
+            color: #f5f5f5;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .service p {
+            color: #cccccc;
+            font-size: 1.1rem;
+        }
+
+        .service:hover h3 {
+            color: #1e1e2f;
+        }
+
+        /* Call to Action */
+        .cta-button {
+            display: block;
+            margin: 50px auto;
+            padding: 15px 30px;
+            background-color: #00bcd4;
+            color: #1e1e2f;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0097a7;
+            transform: translateY(-5px);
+        }
+
+        /* Flash Animations */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Upload & Conversion Section */
+        .container {
+            text-align: center;
+            margin: 30px;
+        }
+
+        .upload-container {
+            margin-top: 20px;
+        }
+
+        .upload-container input, .upload-container select, .upload-container button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .upload-container input {
+            color: #f5f5f5;
+            background-color: #2a2a4a;
+        }
+
+        .upload-container select {
+            background-color: #33334d;
+            color: #f5f5f5;
+        }
+
+        .upload-container button {
+            background-color: #00bcd4;
+            color: #1e1e2f;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .upload-container button:hover {
+            background-color: #0097a7;
+        }
+
+        /* Success Message */
+        #success-message {
+            display: none;
+            margin-top: 20px;
+            color: #00bcd4;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        /* Download Container */
+        #download-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Format Converter</h1>
+        <h2>Convert your images to different formats (PNG, JPG, WebP) with ease.</h2>
+
+        <div class="service-description">
+            <p>Upload your image below, choose the format you want to convert it to, and adjust the size if necessary. The tool supports quick and easy processing for all your image resizing and format conversion needs.</p>
+        </div>
+
+        <!-- Image Upload & Conversion Area -->
+        <div class="upload-container">
+            <input type="file" id="image-upload" accept="image/*">
+            <select id="format-select">
+                <option value="jpg">Convert to JPG</option>
+                <option value="png">Convert to PNG</option>
+                <option value="webp">Convert to WebP</option>
+            </select>
+            <button id="convert-btn">Convert</button>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success-message">
+            <p>Image has been successfully converted! Ready to download.</p>
+        </div>
+
+        <!-- Download Button Section -->
+        <div id="download-container">
+            <a id="download-link" href="#" class="cta-button" download>Download Converted Image</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('convert-btn').addEventListener('click', function() {
+            const fileInput = document.getElementById('image-upload');
+            const formatSelect = document.getElementById('format-select');
+            const file = fileInput.files[0];
+            const format = formatSelect.value;
+        
+            if (!file) {
+                alert('Please upload an image file.');
+                return;
+            }
+        
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('format', format);
+        
+            // Send the image data to the server
+            fetch('http://127.0.0.1:5000/convert', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())  // Get the response as a Blob (binary data)
+            .then(data => {
+                // Create a URL for the converted image and show the download button
+                const downloadLink = document.getElementById('download-link');
+                const objectURL = URL.createObjectURL(data);
+                downloadLink.href = objectURL;
+        
+                // Show success message
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('download-container').style.display = 'block';
+            })
+            .catch(error => {
+                alert('An error occurred: ' + error.message);
+            });
+        });
+        
+        document.getElementById('download-link').addEventListener('click', function() {
+            document.getElementById('success-message').style.display = 'none';
+        });
+        
+    </script>
+</body>
+</html>

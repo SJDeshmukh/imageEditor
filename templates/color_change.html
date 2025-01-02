@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Filter Application</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .tool-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #33334d;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        input[type="file"], input[type="range"], input[type="checkbox"] {
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+        }
+
+        .filter-controls {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .filter-controls label {
+            margin: 5px;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        canvas {
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #555;
+            background-color: #1e1e2f;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background-color: #00d4ff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: #00a3cc;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <h1>Image Filter</h1>
+    <div class="tool-container">
+        <input type="file" id="image-upload" accept="image/*">
+        
+        <div class="filter-controls">
+            <div>
+                <label for="sepia">Sepia</label>
+                <input type="checkbox" id="sepia">
+            </div>
+            <div>
+                <label for="negative">Negative</label>
+                <input type="checkbox" id="negative">
+            </div>
+            <div>
+                <label for="grayscale">Grayscale</label>
+                <input type="checkbox" id="grayscale">
+            </div>
+            <div>
+                <label for="threshold">Threshold</label>
+                <input type="checkbox" id="threshold">
+            </div>
+            <div>
+                <label for="posterize">Posterize</label>
+                <input type="range" id="posterize" min="2" max="10" value="2">
+            </div>
+            <div>
+                <label for="saturate">Saturate</label>
+                <input type="range" id="saturate" min="0" max="3" value="1">
+            </div>
+            <div>
+                <label for="hue-rotate">Hue Rotate</label>
+                <input type="range" id="hue-rotate" min="0" max="360" value="0">
+            </div>
+            <div>
+                <label for="chromatic">Chromatic Aberration</label>
+                <input type="checkbox" id="chromatic">
+            </div>
+            <div>
+                <label for="invert-channel">Invert Channel</label>
+                <input type="checkbox" id="invert-channel">
+            </div>
+        </div>
+
+        <canvas id="canvas"></canvas>
+        <button class="download-btn" id="download-btn">Download Image</button>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('image-upload');
+        const sepiaCheckbox = document.getElementById('sepia');
+        const negativeCheckbox = document.getElementById('negative');
+        const grayscaleCheckbox = document.getElementById('grayscale');
+        const thresholdCheckbox = document.getElementById('threshold');
+        const posterizeSlider = document.getElementById('posterize');
+        const saturateSlider = document.getElementById('saturate');
+        const hueRotateSlider = document.getElementById('hue-rotate');
+        const chromaticCheckbox = document.getElementById('chromatic');
+        const invertChannelCheckbox = document.getElementById('invert-channel');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('download-btn');
+        let img = new Image();
+
+        // Load and display the image
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Render the image to the canvas
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            applyFilters(); // Apply default filters
+        };
+
+        // Apply filters
+        // Apply filters
+const applyFilters = () => {
+    // Get filter values
+    const sepia = sepiaCheckbox.checked;
+    const negative = negativeCheckbox.checked;
+    const grayscale = grayscaleCheckbox.checked;
+    const threshold = thresholdCheckbox.checked;
+    const posterize = posterizeSlider.value;
+    const saturate = saturateSlider.value;
+    const hueRotate = hueRotateSlider.value;
+    const chromatic = chromaticCheckbox.checked;
+    const invertChannel = invertChannelCheckbox.checked;
+
+    // Clear the canvas and redraw the image
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0); // Reset the image
+
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+
+    // Apply the selected filters
+    for (let i = 0; i < data.length; i += 4) {
+        // Sepia filter
+        if (sepia) {
+            const tr = 0.393 * data[i] + 0.769 * data[i + 1] + 0.189 * data[i + 2];
+            const tg = 0.349 * data[i] + 0.686 * data[i + 1] + 0.168 * data[i + 2];
+            const tb = 0.272 * data[i] + 0.534 * data[i + 1] + 0.131 * data[i + 2];
+            data[i] = tr > 255 ? 255 : tr;
+            data[i + 1] = tg > 255 ? 255 : tg;
+            data[i + 2] = tb > 255 ? 255 : tb;
+        }
+
+        // Negative filter
+        if (negative) {
+            data[i] = 255 - data[i];
+            data[i + 1] = 255 - data[i + 1];
+            data[i + 2] = 255 - data[i + 2];
+        }
+
+        // Grayscale filter
+        if (grayscale) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            data[i] = data[i + 1] = data[i + 2] = avg;
+        }
+
+        // Threshold filter
+        if (threshold) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            const thresholdValue = avg > 128 ? 255 : 0;
+            data[i] = data[i + 1] = data[i + 2] = thresholdValue;
+        }
+
+        // Posterize filter
+        if (posterize > 2) {
+            data[i] = Math.floor(data[i] / (256 / posterize)) * (256 / posterize);
+            data[i + 1] = Math.floor(data[i + 1] / (256 / posterize)) * (256 / posterize);
+            data[i + 2] = Math.floor(data[i + 2] / (256 / posterize)) * (256 / posterize);
+        }
+    }
+
+    // Apply the changes to the canvas
+    ctx.putImageData(imageData, 0, 0);
+
+    // Apply CSS filters for hue rotation and saturation
+    ctx.filter = `hue-rotate(${hueRotate}deg) saturate(${saturate})`;
+
+    // Apply chromatic aberration
+    if (chromatic) {
+        ctx.filter += ' blur(2px)';
+    }
+
+    // Apply invert channel
+    if (invertChannel) {
+        ctx.filter += ' invert(100%)';
+    }
+
+    // If no chromatic or invertChannel, reset the filter property
+    if (!chromatic && !invertChannel) {
+        ctx.filter = 'none';
+    }
+
+    // Redraw the filtered image with the applied CSS filters
+    ctx.drawImage(canvas, 0, 0);
+
+    // Show the download button
+    downloadBtn.style.display = 'inline-block';
+};
+
+
+        // Update canvas on filter change
+        sepiaCheckbox.addEventListener('change', applyFilters);
+        negativeCheckbox.addEventListener('change', applyFilters);
+        grayscaleCheckbox.addEventListener('change', applyFilters);
+        thresholdCheckbox.addEventListener('change', applyFilters);
+        posterizeSlider.addEventListener('input', applyFilters);
+        saturateSlider.addEventListener('input', applyFilters);
+        hueRotateSlider.addEventListener('input', applyFilters);
+        chromaticCheckbox.addEventListener('change', applyFilters);
+        invertChannelCheckbox.addEventListener('change', applyFilters);
+
+        // Download the enhanced image
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'enhanced_image.png';
+            link.click();
+        });
+    </script>
+</body>
+</html>

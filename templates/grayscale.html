@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grayscale Converter</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+        }
+
+        h1,h2{
+            text-align: center;
+            margin-top: 130px;
+        }
+
+        .tool-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #33334d;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        input[type="file"], input[type="range"], button {
+            margin: 10px 0;
+            display: block;
+            width: 100%;
+        }
+
+        canvas {
+            margin: 20px 0;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #555;
+            background-color: #1e1e2f;
+        }
+
+        /* Button Style */
+        #download-btn {
+            background-color: #00d4ff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            opacity: 0;
+            pointer-events: none; /* Initially hide button */
+            transition: opacity 0.3s ease;
+        }
+
+        #download-btn.show {
+            opacity: 1;
+            pointer-events: auto; /* Enable button when show class is added */
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none; /* Remove underline */
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Grayscale Converter</h1>
+    <div class="tool-container">
+        <input type="file" id="image-upload" accept="image/*">
+        <label for="contrast">Contrast</label>
+        <input type="range" id="contrast" min="-100" max="100" value="0">
+        <label for="brightness">Brightness</label>
+        <input type="range" id="brightness" min="-100" max="100" value="0">
+        <canvas id="canvas"></canvas>
+        <!-- Download button -->
+        <button id="download-btn">Download Image</button>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('image-upload');
+        const contrastSlider = document.getElementById('contrast');
+        const brightnessSlider = document.getElementById('brightness');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('download-btn');
+        let img = new Image();
+        let imageUploaded = false; // Flag to track if image is uploaded
+
+        // Load and display the image
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    img.src = event.target.result;
+                    imageUploaded = true; // Set the flag to true
+                    downloadBtn.classList.add('show'); // Show download button
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Render the image to the canvas
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            applyFilters(); // Apply default filters
+        };
+
+        // Apply filters
+        const applyFilters = () => {
+            if (!imageUploaded) return; // Don't apply filters if no image is uploaded
+
+            const contrast = contrastSlider.value;
+            const brightness = brightnessSlider.value;
+
+            ctx.drawImage(img, 0, 0); // Reset the image
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                // Convert to grayscale
+                const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                data[i] = data[i + 1] = data[i + 2] = gray;
+
+                // Adjust brightness
+                data[i] += parseInt(brightness);
+                data[i + 1] += parseInt(brightness);
+                data[i + 2] += parseInt(brightness);
+
+                // Adjust contrast
+                const factor = (259 * (parseInt(contrast) + 255)) / (255 * (259 - parseInt(contrast)));
+                data[i] = factor * (data[i] - 128) + 128;
+                data[i + 1] = factor * (data[i + 1] - 128) + 128;
+                data[i + 2] = factor * (data[i + 2] - 128) + 128;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+        };
+
+        // Update canvas on slider change
+        contrastSlider.addEventListener('input', applyFilters);
+        brightnessSlider.addEventListener('input', applyFilters);
+
+        // Download the modified image
+        downloadBtn.addEventListener('click', () => {
+            const dataUrl = canvas.toDataURL('image/png'); // Get the canvas data as PNG
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'grayscale_image.png'; // Set default file name
+            link.click(); // Trigger download
+        });
+    </script>
+</body>
+</html>

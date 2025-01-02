@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Watermarking</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 110px;
+        }
+
+        .container {
+            margin: 20px auto;
+            background-color: #33334d;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            background-color: #222;
+            color: #f5f5f5;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #00d4ff;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        canvas {
+            margin-top: 20px;
+            border: 1px solid #555;
+        }
+
+        .watermark-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            margin: 10px 0;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 2px solid #444;
+            border-radius: 5px;
+            background-color: #222;
+            color: #f5f5f5;
+            font-size: 16px;
+        }
+
+        input[type="text"]::placeholder {
+            color: #888;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background-color: #00d4ff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            background-color: #00a3cc;
+        }
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Image Watermarking</h1>
+    <div class="container">
+        <input type="file" id="image-upload" accept="image/*">
+        
+        <div class="image-container">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="watermark-container">
+            <input type="text" id="watermark-text" placeholder="Enter watermark text">
+            
+        </div>
+        <button class="download-btn" id="download-btn">Download Image</button>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('image-upload');
+        const watermarkTextInput = document.getElementById('watermark-text');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('download-btn');
+        let img = new Image();
+
+        // Load and display the image
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Render the image to the canvas
+        img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            applyWatermark(); // Apply default watermark if any text is set
+        };
+
+        // Apply watermark
+        const applyWatermark = () => {
+            // Get watermark text
+            const watermarkText = watermarkTextInput.value;
+            if (watermarkText === "") {
+                return; // No watermark text, return early
+            }
+
+            // Set watermark text style
+            ctx.font = '50px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // White color with transparency
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Add watermark text to the image
+            const x = canvas.width / 2;  // Horizontal center of the canvas
+            const y = canvas.height / 2; // Vertical center of the canvas
+            ctx.fillText(watermarkText, x, y);
+        };
+
+        // Update watermark when text is entered
+        watermarkTextInput.addEventListener('input', () => {
+            // Clear canvas and redraw the image and watermark
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+            applyWatermark();
+        });
+
+        // Download the watermarked image
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = 'watermarked_image.png';
+            link.click();
+        });
+
+        // Show download button when watermark is added
+        fileInput.addEventListener('change', () => {
+            downloadBtn.style.display = 'inline-block';
+        });
+    </script>
+</body>
+</html>

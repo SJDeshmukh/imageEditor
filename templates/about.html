@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Image Editing Tools</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin-top: 110px;
+            font-size: 36px;
+            color: #00d4ff;
+        }
+
+        .container {
+            margin: 20px auto;
+            background-color: #33334d;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            font-size: 18px;
+            color: #d1d1d1;
+        }
+
+        .content h2 {
+            font-size: 26px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .content ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .content ul li {
+            padding: 5px 0;
+            font-size: 16px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background-color: #00d4ff;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #00a3cc;
+        }
+
+        .content p, .content ul {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Sprinkle Effect */
+        .sprinkle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sprinkle span {
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: sprinkle-animation 5s linear infinite;
+        }
+
+        @keyframes sprinkle-animation {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sprinkle Effect -->
+    <div class="sprinkle">
+        <!-- Generate 50 sprinkle elements dynamically -->
+        <script>
+            const sprinkleContainer = document.querySelector('.sprinkle');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.style.left = `${Math.random() * 100}%`;
+                span.style.animationDelay = `${Math.random() * 2}s`;
+                span.style.animationDuration = `${2 + Math.random() * 3}s`;
+                sprinkleContainer.appendChild(span);
+            }
+        </script>
+    </div>
+
+    <!-- Navbar -->
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <h1>About</h1>
+    <div class="container">
+        <div class="content">
+            <h2>What is This Tool?</h2>
+            <p>Welcome to our all-in-one image editing platform! This tool is designed to simplify image editing tasks such as resizing, format conversion, compression, grayscale conversion, edge detection, applying filters, and watermarking. Whether you're a photographer, designer, or business owner, our tool helps you enhance and optimize your images quickly and easily.</p>
+            
+            <h2>Key Features</h2>
+            <ul>
+                <li>Upload and resize images to different dimensions.</li>
+                <li>Convert images between various formats (PNG, JPG, WebP).</li>
+                <li>Compress images without losing quality.</li>
+                <li>Convert images to grayscale with customizable adjustments.</li>
+                <li>Apply edge detection algorithms like Canny to highlight edges.</li>
+                <li>Enhance images by applying filters such as sepia, blur, and negative.</li>
+                <li>Add watermarks to protect intellectual property or brand your content.</li>
+            </ul>
+
+            <h2>How Does It Work?</h2>
+            <p>Once you upload your image, choose the operation you'd like to apply (resize, convert format, compress, etc.). You can make adjustments as needed using sliders or input fields for customizations. After processing, you can preview the result and download the image in seconds.</p>
+
+            <h2>Why Use This Tool?</h2>
+            <p>Our tool streamlines image editing tasks, saving you time and effort. With a simple, user-friendly interface, you can enhance and optimize your images without the need for complex software. Whether you need to resize images for web use, reduce file sizes without losing quality, or add custom watermarks for protection, this tool covers all the essentials.</p>
+
+            <h2>Who Can Benefit from This Tool?</h2>
+            <p>This tool is perfect for:</p>
+            <ul>
+                <li>Photographers looking to resize and watermark their images for protection.</li>
+                <li>Designers who need to adjust image formats and apply effects for presentations.</li>
+                <li>Businesses looking to optimize images for the web or add branding with watermarks.</li>
+                <li>Content creators who want to quickly enhance and share their images on social media.</li>
+            </ul>
+        </div>
+    </div>
+    <a href="http://127.0.0.1:5000/dashboard">
+        <button class="back-btn">Back to Home</button>
+    </a>
+</body>
+</html>

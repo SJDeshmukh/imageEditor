@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Image Editing Tools</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin-top: 110px;
+            font-size: 36px;
+            color: #00d4ff;
+        }
+
+        .container {
+            margin: 20px auto;
+            background-color: #33334d;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2; /* Ensure this is above the sprinkle */
+        }
+
+        .content {
+            font-size: 18px;
+            color: #d1d1d1;
+        }
+
+        .content h2 {
+            font-size: 26px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .content ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .content ul li {
+            padding: 5px 0;
+            font-size: 30px;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background-color: #00d4ff;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #00a3cc;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px;
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Sprinkle Effect */
+        .sprinkle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1; /* Keep the sprinkle effect below content */
+        }
+
+        .sprinkle span {
+            position: absolute;
+            display: block;
+            width: 5px;
+            height: 5px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: sprinkle-animation 5s linear infinite;
+        }
+
+        @keyframes sprinkle-animation {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sprinkle Effect -->
+    <div class="sprinkle">
+        <!-- Generate 400 sprinkle elements dynamically -->
+        <script>
+            const sprinkleContainer = document.querySelector('.sprinkle');
+            for (let i = 0; i < 400; i++) {
+                const span = document.createElement('span');
+                span.style.left = `${Math.random() * 100}%`;
+                span.style.animationDelay = `${Math.random() *2}s`;
+                span.style.animationDuration = `${2 + Math.random() * 3}s`;
+                sprinkleContainer.appendChild(span);
+            }
+        </script>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <h1>Contact Us</h1>
+    <div class="container">
+        <div class="content">
+            <ul>
+                <li><strong>Email:</strong> sudhanshudeshmukh5894@gmail.com</li>
+                <li><strong>Phone:</strong>+91-9370449595</li>
+                <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/sudhanshu-deshmukh-640b31217" target="_blank">www.linkedin.com/in/sudhanshu-deshmukh-640b31217</a></li>
+            </ul>
+        </div>
+
+        <a href="http://127.0.0.1:5000/dashboard">
+            <button class="back-btn">Back to Home</button>
+        </a>
+    </div>
+
+</body>
+</html>

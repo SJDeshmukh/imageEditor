@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression Tool</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #f5f5f5;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            color: #00bcd4;
+            text-align: center;
+            margin-top: 160px;
+            margin-bottom: 120px;
+        }
+        
+        .container {
+            text-align: center;
+            margin: 30px;
+        }
+        
+        .upload-container {
+            margin-top: 20px;
+        }
+        
+        .upload-container input {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a2a4a;
+            color: #f5f5f5;
+        }
+        
+        .compression-buttons button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #00bcd4;
+            color: #1e1e2f;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .compression-buttons button:hover {
+            background-color: #0097a7;
+        }
+        
+        #success-message {
+            display: none;
+            margin-top: 20px;
+            color: #00bcd4;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        #download-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #00bcd4;
+            color: #1e1e2f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .cta-button:hover {
+            background-color: #0097a7;
+        }
+        
+        .file-size {
+            margin-top: 20px;
+        }
+        
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 30, 50, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        nav.shrink {
+            height: 60px; /* Shrink navbar on scroll */
+            background: rgba(20, 20, 40, 0.9);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.3s;
+        }
+
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 3px;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s;
+        }
+
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="http://127.0.0.1:5000/dashboard">Home</a></li>
+            <li><a href="http://127.0.0.1:5000/services">Services</a></li>
+            <li><a href="http://127.0.0.1:5000/about">About</a></li>
+            <li><a href="http://127.0.0.1:5000/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <h1>Image Compression Tool</h1>
+    <div class="container">
+        <div class="upload-container">
+            <input type="file" id="image-upload" accept="image/*">
+        </div>
+        <div class="compression-buttons">
+            <button data-compression="25">25% Compression</button>
+            <button data-compression="50">50% Compression</button>
+            <button data-compression="75">75% Compression</button>
+            <button data-compression="90">90% Compression</button>
+        </div>
+        <div class="file-size">
+            <p>Original Size: <span id="original-size">0 KB</span></p>
+            <p>Compressed Size: <span id="compressed-size">0 KB</span></p>
+        </div>
+        <div id="success-message">
+            <p>Image has been successfully compressed! Ready to download.</p>
+        </div>
+        <div id="download-container">
+            <a id="download-link" href="#" class="cta-button" download>Download Compressed Image</a>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.compression-buttons button');
+        const fileInput = document.getElementById('image-upload');
+        const originalSizeText = document.getElementById('original-size');
+        const compressedSizeText = document.getElementById('compressed-size');
+        const successMessage = document.getElementById('success-message');
+        const downloadContainer = document.getElementById('download-container');
+        const downloadLink = document.getElementById('download-link');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const compressionLevel = button.getAttribute('data-compression');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Please upload an image file.');
+                    return;
+                }
+
+                // Display original file size
+                const originalSize = (file.size / 1024).toFixed(2); // KB
+                originalSizeText.textContent = `${originalSize} KB`;
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('compression_level', compressionLevel);
+
+                // Send the image and compression level to the backend
+                fetch('http://127.0.0.1:5000/compress', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.blob())
+                .then(data => {
+                    const objectURL = URL.createObjectURL(data);
+                    downloadLink.href = objectURL;
+
+                    // Display compressed file size
+                    const compressedSize = (data.size / 1024).toFixed(2); // KB
+                    compressedSizeText.textContent = `${compressedSize} KB`;
+
+                    // Show success message and download link
+                    successMessage.style.display = 'block';
+                    downloadContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    alert('An error occurred: ' + error.message);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
