@@ -186,15 +186,29 @@ def convert_image():
     file = request.files['file']
     format = request.form['format']
 
-    image = Image.open(file)
-    if format.lower() == 'jpg':
-        format = 'jpeg'
+    try:
+        # Open the uploaded image file
+        image = Image.open(file)
 
-    img_byte_arr = io.BytesIO()
-    image.save(img_byte_arr, format=format.upper())
-    img_byte_arr.seek(0)
+        # Normalize format input
+        if format.lower() == 'jpg':
+            format = 'jpeg'
 
-    return send_file(img_byte_arr, mimetype=f'image/{format.lower()}', as_attachment=True, download_name=f'converted_image.{format.lower()}')
+        # Convert and save image in memory
+        img_byte_arr = io.BytesIO()
+        image.save(img_byte_arr, format=format.upper())
+        img_byte_arr.seek(0)
+
+        # Send the converted image as a download
+        return send_file(
+            img_byte_arr,
+            mimetype=f'image/{format.lower()}',
+            as_attachment=True,
+            download_name=f'converted_image.{format.lower()}'
+        )
+    except Exception as e:
+        return f'Error processing image: {e}', 500
+
 
 @app.route('/compress', methods=['POST'])
 @login_required
