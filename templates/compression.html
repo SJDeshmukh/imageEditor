@@ -6,13 +6,13 @@
     <title>Image Compression Tool</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Arial', 'Helvetica', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #1e1e2f;
             color: #f5f5f5;
         }
-        
+
         h1 {
             font-size: 3rem;
             color: #00bcd4;
@@ -20,25 +20,32 @@
             margin-top: 160px;
             margin-bottom: 120px;
         }
-        
+
         .container {
             text-align: center;
             margin: 30px;
         }
-        
+
         .upload-container {
             margin-top: 20px;
+            padding: 20px;
+            border: 2px dashed #00bcd4;
+            border-radius: 10px;
+            cursor: pointer;
         }
-        
+
+        .upload-container:hover {
+            background-color: rgba(0, 188, 212, 0.1);
+        }
+
         .upload-container input {
-            padding: 10px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 5px;
-            background-color: #2a2a4a;
-            color: #f5f5f5;
+            display: none;
         }
-        
+
+        .compression-buttons {
+            margin: 20px 0;
+        }
+
         .compression-buttons button {
             margin: 10px;
             padding: 10px 20px;
@@ -50,11 +57,15 @@
             font-weight: bold;
             cursor: pointer;
         }
-        
+
         .compression-buttons button:hover {
             background-color: #0097a7;
         }
-        
+
+        .file-size {
+            margin-top: 20px;
+        }
+
         #success-message {
             display: none;
             margin-top: 20px;
@@ -62,12 +73,12 @@
             font-size: 1.3rem;
             font-weight: bold;
         }
-        
+
         #download-container {
             display: none;
             margin-top: 20px;
         }
-        
+
         .cta-button {
             display: inline-block;
             padding: 15px 30px;
@@ -81,16 +92,11 @@
             text-decoration: none;
             transition: background-color 0.3s;
         }
-        
+
         .cta-button:hover {
             background-color: #0097a7;
         }
-        
-        .file-size {
-            margin-top: 20px;
-        }
-        
-        /* Navbar */
+
         nav {
             display: flex;
             justify-content: center;
@@ -105,11 +111,6 @@
             z-index: 1000;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
-        }
-
-        nav.shrink {
-            height: 60px; /* Shrink navbar on scroll */
-            background: rgba(20, 20, 40, 0.9);
         }
 
         nav ul {
@@ -150,7 +151,6 @@
             transform: scaleX(1);
             transform-origin: left;
         }
-        
     </style>
 </head>
 <body>
@@ -162,9 +162,11 @@
             <li><a href="/contact">Contact</a></li>
         </ul>
     </nav>
+
     <h1>Image Compression Tool</h1>
     <div class="container">
-        <div class="upload-container">
+        <div class="upload-container" id="upload-container">
+            <p>Drag and drop an image here or click to upload</p>
             <input type="file" id="image-upload" accept="image/*">
         </div>
         <div class="compression-buttons">
@@ -188,11 +190,19 @@
     <script>
         const buttons = document.querySelectorAll('.compression-buttons button');
         const fileInput = document.getElementById('image-upload');
+        const uploadContainer = document.getElementById('upload-container');
         const originalSizeText = document.getElementById('original-size');
         const compressedSizeText = document.getElementById('compressed-size');
         const successMessage = document.getElementById('success-message');
         const downloadContainer = document.getElementById('download-container');
         const downloadLink = document.getElementById('download-link');
+
+        uploadContainer.addEventListener('click', () => fileInput.click());
+        uploadContainer.addEventListener('dragover', e => e.preventDefault());
+        uploadContainer.addEventListener('drop', e => {
+            e.preventDefault();
+            fileInput.files = e.dataTransfer.files;
+        });
 
         buttons.forEach(button => {
             button.addEventListener('click', () => {
@@ -204,15 +214,13 @@
                     return;
                 }
 
-                // Display original file size
-                const originalSize = (file.size / 1024).toFixed(2); // KB
+                const originalSize = (file.size / 1024).toFixed(2);
                 originalSizeText.textContent = `${originalSize} KB`;
 
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('compression_level', compressionLevel);
 
-                // Send the image and compression level to the backend
                 fetch('/compress', {
                     method: 'POST',
                     body: formData
@@ -222,11 +230,9 @@
                     const objectURL = URL.createObjectURL(data);
                     downloadLink.href = objectURL;
 
-                    // Display compressed file size
-                    const compressedSize = (data.size / 1024).toFixed(2); // KB
+                    const compressedSize = (data.size / 1024).toFixed(2);
                     compressedSizeText.textContent = `${compressedSize} KB`;
 
-                    // Show success message and download link
                     successMessage.style.display = 'block';
                     downloadContainer.style.display = 'block';
                 })
