@@ -84,6 +84,10 @@ def register():
 def success():
     return "Registration successful!"
 
+@app.route('/')
+def success():
+    return render_template('login.html')
+
 
 @app.route('/services')
 def services():
