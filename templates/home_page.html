@@ -14,7 +14,7 @@
             background: linear-gradient(120deg, #090a0f, #1b1d29);
             color: #fff;
             overflow-x: hidden;
-            scroll-behavior: smooth; /* Smooth scrolling */
+            scroll-behavior: smooth;
         }
 
         h1, h2 {
@@ -24,7 +24,7 @@
         /* Navbar */
         nav {
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* Centering navbar items horizontally */
             align-items: center;
             position: fixed;
             top: 0;
@@ -35,12 +35,11 @@
             backdrop-filter: blur(10px);
             z-index: 1000;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
             padding: 0 20px;
         }
 
         nav.shrink {
-            height: 60px; /* Shrink navbar on scroll */
+            height: 60px;
             background: rgba(20, 20, 40, 0.9);
         }
 
@@ -81,6 +80,23 @@
         nav ul li a:hover::before {
             transform: scaleX(1);
             transform-origin: left;
+        }
+
+        /* Hamburger Icon for Mobile */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 24px;
+            width: 30px;
+        }
+
+        .hamburger div {
+            background-color: #fff;
+            height: 3px;
+            width: 100%;
+            border-radius: 5px;
         }
 
         /* Logout Button */
@@ -164,49 +180,30 @@
             }
         }
 
-        /* Media Queries for responsiveness */
+        /* Responsive Media Queries */
         @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                height: auto;
-                padding: 10px;
-            }
-
             nav ul {
+                display: none;
                 flex-direction: column;
+                align-items: center;
                 width: 100%;
-                text-align: center;
+                padding-top: 20px;
             }
 
             nav ul li {
                 margin: 10px 0;
             }
 
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .hero .typing {
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
             nav ul li a {
                 font-size: 16px;
             }
 
-            .hero h1 {
-                font-size: 2.5rem;
+            .hamburger {
+                display: flex;
             }
 
-            .hero .typing {
-                font-size: 1rem;
-            }
-
-            .logout-btn {
-                font-size: 16px;
-                padding: 10px 20px;
+            nav.active ul {
+                display: flex;
             }
         }
     </style>
@@ -214,12 +211,17 @@
 <body>
     <!-- Navbar -->
     <nav>
+        <div class="hamburger" id="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <ul>
             <li><a href="/dashboard">Home</a></li>
             <li><a href="/services">Services</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/contact">Contact</a></li>
-            <li><a href="/logout" class="logout-btn">Logout</a></li> <!-- Logout Button -->
+            <li><a href="/logout" class="logout-btn">Logout</a></li>
         </ul>
     </nav>
 
@@ -275,6 +277,12 @@
         const navbar = document.querySelector('nav');
         window.addEventListener('scroll', () => {
             navbar.classList.toggle('shrink', window.scrollY > 50);
+        });
+
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        hamburger.addEventListener('click', () => {
+            document.querySelector('nav').classList.toggle('active');
         });
     </script>
 </body>
