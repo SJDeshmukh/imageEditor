@@ -216,4 +216,3 @@ if __name__ == '__main__':
     create_table()
     CORS(app)
     app.run(debug=True)
-s
