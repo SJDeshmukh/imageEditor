@@ -58,7 +58,7 @@ def require_login():
 
 @app.route('/', methods=['GET', 'POST'])
 def loginto():
-    return render_template('login.html')
+    return redirect(url_for('log_in'))
 
 # Routes
 @app.route('/register', methods=['GET', 'POST'])
