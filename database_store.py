@@ -40,23 +40,7 @@ def create_table():
 
 
 
-@app.route('/download_db', methods=['GET'])
-@login_required
-def download_db():
-    try:
-        # Ensure the file exists
-        if not os.path.exists(db_file):
-            return jsonify({"error": "Database file not found"}), 404
 
-        # Send the database file as an attachment
-        return send_file(
-            db_file,
-            mimetype='application/octet-stream',
-            as_attachment=True,
-            download_name=os.path.basename(db_file)
-        )
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 # Login required decorator
@@ -138,6 +122,26 @@ def log_in():
 
     return render_template('login.html')
 
+
+
+
+@app.route('/download_db', methods=['GET'])
+@login_required
+def download_db():
+    try:
+        # Ensure the file exists
+        if not os.path.exists(db_file):
+            return jsonify({"error": "Database file not found"}), 404
+
+        # Send the database file as an attachment
+        return send_file(
+            db_file,
+            mimetype='application/octet-stream',
+            as_attachment=True,
+            download_name=os.path.basename(db_file)
+        )
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 @app.route('/logout')
 def logout():
     session.clear()
